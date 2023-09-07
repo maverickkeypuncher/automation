@@ -1,0 +1,32 @@
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+#Red Hat Satellite Server#
+10.175.52.18   meylvrhsa1.corp.du.ae  meylvrhsa1
+
+
+##### Update by Suleman on 01 July 2018 All Rpms #######
+##########Backup IP Details###################
+172.20.238.194       meylvhcmmn01-bkp
+172.20.238.195       meylvhcmmn02-bkp
+172.20.238.196       meylvhcmmn03-bkp
+172.20.238.197       meylvhcmwn01-bkp
+172.20.238.198       meylvhcmwn02-bkp
+172.20.238.199       meylvhcmwn03-bkp
+172.22.27.208        backup-srv4   backup-srv4.corp.du.ae
+10.175.78.9         MEYR990DD02  MEYR990DD02.corp.du.ae
+10.175.53.212        mey9500dd  mey9500dd.corp.du.ae
+172.23.59.196        mey2lpdd9500  mey2lpdd9500.corp.du.ae
+172.22.27.174        MEYR990DD01  MEYR990DD01.corp.du.ae
+172.23.59.114        MEYM2DD9800  MEYM2DD9800.corp.du.ae
+##### OM Servers #####
+10.100.162.46 om01.corp.du.ae om01
+10.100.162.47 om02.corp.du.ae om02
+10.100.162.50 om.corp.du.ae om
+######HOST ENTRY FOR OBM######
+172.23.92.17 obmdc.corp.du.ae
+172.20.238.130 meylvhcmmn01.corp.du.ae
+172.20.238.131 meylvhcmmn02.corp.du.ae
+
+10.20.20.20 dj.corp.du.ae
+10.10.10.11 dhananjay.rughani@du.ae

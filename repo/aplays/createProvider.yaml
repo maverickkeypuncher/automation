@@ -1,0 +1,66 @@
+## Play book has two plays
+## These plays should be executed when new providers are added to the cloud.
+## Providers could be : vmware vcenter server, fortinet firewall, Cisco ACI, IPAM server, UCMDB, Qualys, Active Directory etc
+---
+ - name: "Please check the list of providers"
+   hosts: localhost
+   gather_facts: no
+   tasks:
+     - name: "List the provider name"
+       command: 'cat /var/vols/itom/aplays/provider_name'
+       register: op
+     - debug: var=op.stdout_lines
+
+
+ - name: "This playbook is executed as you want to create a provider for the cloud. The end result would be a json file with the provider name"
+   hosts: localhost
+   gather_facts: no
+   vars_prompt:
+          - name: provider_name
+            prompt: "Please copy a provider name without quotes from above list and paste here"
+            private: no
+          - name: provider_access_point
+            prompt: "Please enter provider URL or IP address. Eg: 10.x.x.x. or www.provider.net"
+            private: no
+          - name: provider_port_no
+            prompt: "Please enter provider port number. Eg: 8080, 8443, 443, 80"
+            private: no
+          - name: provider_username
+            prompt: "Please enter provider username without its domain Eg: USERNAME"
+            private: no
+          - name: provider_password
+            prompt: "Please enter provider password"
+            unsafe: yes
+            private: yes
+   vars:
+     filename: "{{ provider_name }}"
+     json:
+       provider_name: "{{ provider_name }}"
+       provider_access_point: "{{ provider_access_point }}"
+       provider_port_no: "{{ provider_port_no }}"
+       provider_username: "{{ provider_username }}"
+       provider_password: "{{ provider_password }}"
+   tasks:
+     - name: "Split"
+       shell: "echo {{ provider_name }} | cut -d'_' -f1"
+       register: dirname
+     - name: "Create a provider directory"
+       file:
+         state: "directory"
+         path: "/var/vols/itom/aplays/providers/"
+     - name: "Create a specific provider directory"
+       file:
+         state: "directory"
+         path: "/var/vols/itom/aplays/providers/{{ dirname.stdout_lines[0] }}"
+       #command: mkdir /var/vols/itom/aplays/providers/{{ dirname.stdout_lines[0] }} 
+     - name: "Creating a provider file in json format and copying it in respective provider foler"
+     #  debug: msg="{{ dirname.stdout_lines }}"
+       copy:
+         content: "{{ json | to_json }}"
+         dest: "/var/vols/itom/aplays/providers/{{ dirname.stdout_lines[0] }}/{{ filename }}_provider.json"
+       #  wnen: 
+       #     - json.provider_name.stdout  != ""
+       #     - json.provider_access_point.stdout != ""
+       #     - json.provider_port_no.stdout  != ""
+       #     - json.provider_username.stdout  != ""
+       #     - json.provider_password.stdout  != ""

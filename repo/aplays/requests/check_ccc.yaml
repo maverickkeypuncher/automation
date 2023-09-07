@@ -1,0 +1,8 @@
+project_name: check
+ project_code: ccc
+ dc:           Meydan
+ os:           Windows
+ ram:          8
+ cpu:          4
+ vlanID:       null
+ subnet:       null

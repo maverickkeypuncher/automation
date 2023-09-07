@@ -1,0 +1,8 @@
+project_name: okay
+ project_code: ok
+ dc:           Meydan
+ os:           Windows
+ ram:          18
+ cpu:          9
+ vlanID:       null
+ subnet:       null

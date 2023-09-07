@@ -1,0 +1,19 @@
+-
+  name: 'Playbook checks if IDM pod is down and sends an email'
+  hosts: localhost
+  become: true
+  tasks:
+    - name: 'Fetch the status of IDM pod'
+      shell: "kubectl get pods -n core | grep -i idm | cut -d' ' -f1"
+      register: idmpodname
+    - name: 'Use the pod name and find the status'
+      shell: "kubectl describe pods {{ idmpodname }}  -n core | grep -i status | head -1 | cut -d':' -f2 | xargs"
+      register: podstatus
+    - debug: 
+         var: podstatus.stdout
+    - command: cat /etc/hosts
+      register: op
+      
+      when: podstatus.stdout == ""   
+
+      

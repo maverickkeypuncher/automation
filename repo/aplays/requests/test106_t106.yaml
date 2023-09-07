@@ -1,0 +1,8 @@
+project_name: test106
+ project_code: t106
+ dc:           mey
+ os:           linux
+ ram:          16
+ cpu:          8
+ vlanID:       null
+ subnet:       null

@@ -1,0 +1,8 @@
+project_name: jkls
+ project_code: jjj
+ dc:           Meydan
+ os:           Windows
+ ram:          8
+ cpu:          4
+ vlanID:       null
+ subnet:       null

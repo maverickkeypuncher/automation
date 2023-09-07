@@ -1,0 +1,61 @@
+---
+ #- import_playbook: userForm.yaml
+ - name: 'This play will deploy VM in vCenter using API'
+   hosts: localhost
+   gather_facts: no
+   tasks:
+    - name: "Gather data from provider"
+      shell: cat /var/vols/itom/aplays/requests/request.json
+      register: json
+
+    - name: "Save the colledted data from request.json file"
+      set_fact:
+          reqdata : "{{ json.stdout | from_json }}" 
+
+    - name: "Gather data from provider"
+      shell: cat {{ provider_dir_path }}/vmware/vmware_vsphere_meydan_provider.json
+      register: jdata
+
+    - name: "Save the colledted data"
+      set_fact:
+          jsondata: "{{ jdata.stdout | from_json }}" 
+
+    - name: "Deploy VM"
+      vmware_guest:
+             annotation: "This is deployed using ansible"
+             cluster: "MEYLCESXHCM02"
+             #customization:
+             #     - dns_servers: 172.23.10.15
+             #     - dns_suffix: corp.du.ae
+             #     - domain: corp.du.ae
+             #     - hostname: ansiblenodedj
+             #     - timezone: 'Asia/Dubai' 
+             customization_spec: "RHEL"
+             datacenter: "{{ reqdata.dc }}"
+             datastore: "MEYLCESXHCM02_NRPL_VMFS_Golden_Image_ISO"
+             disk:
+               - size_gb: 100
+                 type: thin
+             folder: '/Meydan/vm/Templates/'
+             guest_id: "rhel7_64Guest"
+             hardware:
+                  hotadd_cpu: yes
+                  hotremove_cpu: yes
+                  hotadd_memory: yes
+                  memory_mb: "{{ reqdata.ram }}"
+                  num_cpus: " {{ reqdata.cpu }}"
+                  num_cpu_cores_per_socket: 2
+             hostname: "{{ jsondata.provider_access_point }}"
+             name: "MEYLVANSI{{ reqdata.project_code }}01"
+             networks:
+                - name: "1745"
+                  #vlan: 1745
+                  start_connected: no
+             password: "{{ jsondata.provider_password }}"
+             port: 443
+             state: present
+             template: 'RHEL-7.6-April-2019'
+             username: 'ducorp\{{ jsondata.provider_username }}'
+             validate_certs: false
+             wait_for_customization: yes
+             wait_for_ip_address: no

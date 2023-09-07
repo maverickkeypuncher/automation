@@ -1,0 +1,9 @@
+---
+ 
+ - import_playbook: userForm.yaml
+ - import_playbook: ipam/authenticateIPAM.yaml 
+ - import_playbook: "/var/vols/itom/aplays/ipam/getFreeSubnets.yaml"
+ #- import_playbook: "/var/vols/itom/aplays/ipam/getFreeVlans.yaml"
+ #- import_playbook: "/var/vols/itom/aplays/ipam/reserveFreeVlans.yaml"
+ #- import_playbook: deployVM.yaml
+ #- import_playbook: "/var/vols/itom/aplays/ipam/getFreeSubnets.yaml"

@@ -1,0 +1,34 @@
+ #- import_playbook: userForm.yaml
+ - name: 'This play will be called everytime when IPAM operations are perfomed'
+   hosts: localhost
+   gather_facts: no
+   tasks:
+    - name: "Gather data from provider IPAM"
+      shell: cat {{ provider_dir_path }}/ipam/ipam_provider.json
+      register: ipamdata
+
+    - name: "Save the colledted data"
+      set_fact:
+          jsonipamdata: "{{ ipamdata.stdout | from_json }}"
+    
+    #- debug: msg="{{ jsonipamdata }}"
+    - name: "Connect to the IPAM and get token for further operations"
+      uri: 
+       url: 'https://{{ jsonipamdata.provider_access_point }}:{{ jsonipamdata.provider_port_no }}/netutils/api/auth/'
+       method: POST
+       user: "{{ jsonipamdata.provider_username }}"
+       password: "{{ jsonipamdata.provider_password }}"
+       headers:
+          Content-Type: "application/json"
+       status_code:
+                  - 201
+                  - 200
+       #body:
+       force_basic_auth: true
+       validate_certs: false
+       return_content: true
+      register: op
+    - copy:
+        content: "{{ op.json.data.token }}"
+        dest: "/var/vols/itom/aplays/ipam/token"  
+    #- debug: msg="{{ op.json.data.token }}"

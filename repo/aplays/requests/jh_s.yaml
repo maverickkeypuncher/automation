@@ -1,0 +1,8 @@
+project_name: jh
+ project_code: s
+ dc:           Meydan
+ os:           Windows
+ ram:          16
+ cpu:          8
+ vlanID:       null
+ subnet:       null

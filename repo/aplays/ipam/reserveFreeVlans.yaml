@@ -1,0 +1,49 @@
+---
+ #- import_playbook: authenticateIPAM.yaml
+ - name: 'Reserve free vlan got from - get free vlans playbook'
+   hosts: localhost
+   gather_facts: no
+   vars:
+     projfip: "{{ pfp }}"
+     vlanidop: "{{ op.json.data[0].vlanId }}"
+     datacenter: mey
+   #vars_files:
+   #   - "{{ projectfilepath }}"
+    
+  
+
+   tasks:
+    - debug: msg= "{{ projfip }}"  
+ 
+    - name: "Gather data from provider IPAM"
+      shell: "cat {{ provider_dir_path }}/ipam/ipam_provider.json"
+      register: ipamdata
+
+    - name: "Save the colledted data"
+      set_fact:
+          jsonipamdata: "{{ ipamdata.stdout | from_json }}"
+    
+    - name: "Read the token"
+      shell: cat {{ ipam }}/token
+      register: ipamtoken
+
+    - debug: msg="{{ ipamtoken }}"
+
+    - name: "Connect to the IPAM and get available vlans"
+      uri:
+       url: 'https://{{ jsonipamdata.provider_access_point }}:{{ jsonipamdata.provider_port_no }}/netutils/api/vlans/reserve/{{ vlanidop }}/{{ datacenter }}'
+       method: PUT
+       headers:
+          Content-Type: "application/json"
+          Authorization: "Bearer {{ ipamtoken.stdout_lines[0] }}"
+       status_code:
+                  - 201
+                  - 200
+       body: { "name":"test106", "layer":null, "type":"service", "fwp":false, "category":"Planned Change", "appName":"t106" }
+       body_format: json
+       force_basic_auth: true
+       validate_certs: false
+       return_content: true
+      register: resvlan
+    - debug: msg="{{ resvlan }}"
+

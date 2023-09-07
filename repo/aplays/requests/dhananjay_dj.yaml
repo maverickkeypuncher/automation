@@ -1,0 +1,8 @@
+project_name: dhananjay
+ project_code: dj
+ dc:           Meydan
+ os:           Windows
+ ram:          16
+ cpu:          8
+ vlanID:       null
+ subnet:       null

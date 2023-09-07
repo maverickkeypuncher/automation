@@ -1,0 +1,8 @@
+project_name: naiok
+ project_code: mmm
+ dc:           Meydan
+ os:           Windows
+ ram:          16
+ cpu:          8
+ vlanID:       null
+ subnet:       null

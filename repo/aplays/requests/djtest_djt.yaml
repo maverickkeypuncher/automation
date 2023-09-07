@@ -1,0 +1,8 @@
+project_name: djtest
+ project_code: djt
+ dc:           Meydan
+ os:           Windows
+ ram:          8
+ cpu:          4
+ vlanID:       null
+ subnet:       null

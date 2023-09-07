@@ -1,0 +1,54 @@
+---
+ - import_playbook: authenticateIPAM.yaml 
+ - name: 'Get available free vlans'
+   hosts: localhost
+   gather_facts: no
+   vars:
+      projectfilepath: "{{ filepath.stdout_lines[0] }}" 
+   tasks:
+   
+    #- debug: msg="{{ projectfilepath }}"
+
+    #- name: "Get the project name"
+    #  shell: cat {{ project_dir_path }}/ipam/ipam_provider.json
+    #  register: ipamdata
+
+
+    - name: "Gather data from provider IPAM"
+      shell: cat {{ provider_dir_path }}/ipam/ipam_provider.json
+      register: ipamdata
+
+    - name: "Save the colledted data"
+      set_fact:
+          jsonipamdata: "{{ ipamdata.stdout | from_json }}"
+    
+    - name: "Read the token"
+      shell: cat {{ ipam }}/token
+      register: ipamtoken
+
+
+    - name: "Connect to the IPAM and get available vlans"
+      uri:
+       url: 'https://{{ jsonipamdata.provider_access_point }}:{{ jsonipamdata.provider_port_no }}/netutils/api/vlans/get-free/tag/fw/dc/mey'
+       method: GET
+       headers:
+          Content-Type: "application/json"
+          Authorization: "Bearer {{ ipamtoken.stdout_lines[0] }}"
+       status_code:
+                  - 201
+                  - 200
+       #body:
+       force_basic_auth: true
+       validate_certs: false
+       return_content: true
+      register: op
+    - debug: msg="{{ op.json.data[0].vlanId }}"
+    ## Update the vlan id in file
+    #- name: "Update the free vlan id in project file"
+
+    - name: "Echo"
+      command: 'echo {{ projectfilepath }}'
+      register: pfp
+    - debug: msg="{{ pfp }}"
+    
+

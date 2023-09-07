@@ -1,0 +1,8 @@
+project_name: dj
+ project_code: dkl
+ dc:           Meydan
+ os:           windows
+ ram:          8
+ cpu:          4
+ vlanID:       null
+ subnet:       null

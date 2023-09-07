@@ -1,0 +1,59 @@
+---
+ #- import_playbook: authenticateIPAM.yaml 
+ - name: 'Get available free subnets'
+   hosts: localhost
+   gather_facts: no
+   # project file name getting deployed
+   vars_files:
+      - "{{ filepath.stdout_lines[0] }}"
+       #projectfilepath: "{{ filepath }}" 
+   tasks:
+
+    #- name: "Gather data from project file"
+    #  shell: cat {{ projectfilepath }}
+    #  register: pfp
+
+    - debug: msg="{{ filepath.stdout_lines[0] }}"
+
+    - name: "Gather data from provider IPAM"
+      shell: cat {{ provider_dir_path }}/ipam/ipam_provider.json
+      register: ipamdata
+
+    - name: "Save the colledted data"
+      set_fact:
+          jsonipamdata: "{{ ipamdata.stdout | from_json }}"
+          #jsonpfpdata: "{{ pfp.stdout | from_json }}"
+    
+    #- debug: msg="{{ jsonpfpdata }}"
+
+    - name: "Read the token"
+      shell: cat {{ ipam }}/token
+      register: ipamtoken
+
+
+    - name: "Connect to the IPAM and get available subnets"
+      uri:
+       url: 'https://{{ jsonipamdata.provider_access_point }}:{{ jsonipamdata.provider_port_no }}/netutils/api/subnets/get-free/28/{{ os }}/mey'
+       method: GET
+       headers:
+          Content-Type: "application/json"
+          Authorization: "Bearer {{ ipamtoken.stdout_lines[0] }}"
+       status_code:
+                  - 201
+                  - 200
+       #body:
+       force_basic_auth: true
+       validate_certs: false
+       return_content: true
+      register: op
+    #- debug: msg="{{ op.json.data[0].vlanId }}"
+    - debug: msg="{{ op }}"
+    ## Update the vlan id in file
+    #- name: "Update the subnet IP  in project file"
+
+    #- name: "Echo"
+    #  command: 'echo {{ projectfilepath }}'
+    #  register: pfp
+    #- debug: msg="{{ pfp }}"
+    
+

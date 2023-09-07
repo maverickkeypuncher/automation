@@ -1,0 +1,10 @@
+-
+  name: 'Ass a line in a file using line in file module'
+  hosts: localhost
+  tasks:
+    - name: 'add the line in file using lineinfile module'
+      lineinfile:
+          path: '/var/vols/itom/aplays/hostsbkp'
+          backup: true 
+          insertbefore: '^10.10.10.11'
+          line: '10.20.20.20 dj.corp.du.ae'

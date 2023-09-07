@@ -1,0 +1,10 @@
+## Playbook is executed when end user needs to request a service either IAAD or PAAS
+---
+   - name: "Test"
+     hosts: localhost
+     tasks:
+       - name: Include
+         include_vars:
+             file: userRequest.yaml
+             name: json
+       - debug: msg="{{ json }}"

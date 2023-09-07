@@ -1,0 +1,8 @@
+project_name: jay
+ project_code: k
+ dc:           Meydan
+ os:           Windows
+ ram:          16
+ cpu:          8
+ vlanID:       null
+ subnet:       null

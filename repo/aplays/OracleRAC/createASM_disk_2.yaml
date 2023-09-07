@@ -1,0 +1,32 @@
+-
+  name: "Playbook to create ASM disks. Should be executed only after checkDisks_And_CreatePartition_1.yaml play"
+  hosts: racnode1
+  become: yes
+  vars:
+    opfile: /tmp/disks_present_2
+  tasks:
+    - name: "Loop through each disks and based on its size create an oracle asm disk"
+      shell: lsblk -l -o name,size | grep  ^sd[a-z][0-9] | egrep -v 'sda|sdb|sdc' 
+      register: disks_present_2
+     
+    - name: "Create  the output file named /tmp/disks_present_2"
+      file:
+         path: "{{ opfile }}"
+         state: touch
+        
+    - name: "Write the disks_present_2 variable output in /tmp/disks_present_2"
+      lineinfile:
+           path: "{{ opfile }}"
+           line: "{{ disks_present_2.stdout_lines | list }}"
+           state: present
+
+    - name: "Fetch the file in controller node "
+      fetch:  
+        src: '/tmp/disks_present_2'
+        dest:  '/tmp/'
+
+
+    - name: "Check if oracleasm filesystem is already created"
+      shell: 'echo {{ item | split(" ") | first }}'
+      with_items:
+            - "{{ lookup('file', '/tmp/racnode1/tmp/disks_present_2') }}"

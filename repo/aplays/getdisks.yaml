@@ -1,0 +1,16 @@
+-
+  name: 'Get the disks from the server'
+  hosts: localhost
+  gather_facts: yes
+  vars:
+    disksname: "{{ ansible_devices | select('match','sd.*') }} | list"
+    
+  tasks:
+    - lineinfile:
+        path: "/tmp/disks"
+        line: "{{ disksname }}"
+        create: yes
+    - command: 'cat /tmp/disks'
+      register: data
+    - debug: var="{{ data.stdout_lines[0] }}"
+       

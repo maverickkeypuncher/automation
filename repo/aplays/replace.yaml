@@ -1,0 +1,10 @@
+-
+  name: 'replace a line in a file'
+  hosts: localhost
+  tasks:
+    - name: 'replace the line'
+      replace:
+          path: '/var/vols/itom/aplays/hostsbkp'
+          regexp: '^10.10.10.10'
+          replace: '10.10.10.11'
+          backup: true 

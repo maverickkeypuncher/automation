@@ -1,0 +1,36 @@
+-
+  name: "First playbook for OracleRAC setup"
+  hosts: racnode1
+  become: yes
+  vars:
+    disksopfile: /tmp/disks_present
+  tasks:
+     - name: "Checking the number of disks present in the system"
+       ## Below command gets all the disks present in the system like sda,sdb,sdc etc
+       shell: lsblk |  awk '{print $1}' | grep -v ^sr | grep -v ^fd | grep -v [0-9] | grep ^sd
+       register: disks
+    
+     - name: "Create the output file if it is not present, this file will store a list of disks present in the system"
+       file:
+         state: touch
+         path: "{{ disksopfile }}"  
+
+     - name: "Storing the number of disks found using the first tasks in this play in the output file"
+       lineinfile:
+            path: "{{ disksopfile }}"
+            state: present
+            line: "{{ disks.stdout_lines | list }}"
+ 
+     - debug:
+         msg: "Lines is {{ disks.stdout_lines | list }}"
+         
+
+     - name: "Process the list to check if it has already the partition created, if partition is created already skip the disks as it cannot be used by oracleasm, else create it"
+       parted: 
+          device: "/dev/{{ item }}"
+          number: 1
+          state: present        
+          fs_type: xfs
+       with_items: 
+            - "{{ lookup('file', '/tmp/disks_present') }}"
+

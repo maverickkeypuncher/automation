@@ -1,0 +1,83 @@
+
+
+exec 1> /tmp/command.log 2>&1
+
+
+cat << EOF >> /oracle/.bash_profile 
+
+
+# .bash_profile
+umask 0022
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+fi
+
+# User specific environment and startup programs
+
+PATH=$PATH:$HOME/.local/bin:$HOME/bin
+
+export PATH
+
+# Oracle Environment
+
+alias sysdba='sqlplus / as sysdba'
+echo "Select Oracle SID"
+echo "1.  ASM"
+echo "2.  itmprod"
+
+read orvar
+
+case \$orvar in
+1)
+#ORACLE_BASE=/oracle/app;export ORACLE_BASE
+ORACLE_HOME=/oragrid/app/product/19.3.0/grid_1;export ORACLE_HOME
+ORACLE_SID=+ASM1;export ORACLE_SID
+ORACLE_TERM=xterm;export ORACLE_TERM
+
+# Set shell search paths:
+export PATH=$ORACLE_HOME/bin:$PATH:$ORACLE_HOME/OPatch
+#export PATH=/oragrid/app/product/19.3.0/grid_1/perl/bin
+#clear
+env | grep  ORA
+;;
+
+
+2)
+ORACLE_BASE=/oracle/app;export ORACLE_BASE
+ORACLE_HOME=/oracle/app/product/19.3.0/dbhome_1;export ORACLE_HOME
+#ORACLE_SID=itmprod1;export ORACLE_SID
+ORACLE_TERM=xterm;export ORACLE_TERM
+#export PATH=/oracle/app/product/19.3.0/dbhome_1/perl/bin
+# Set shell search paths:
+export PATH=$ORACLE_HOME/bin:$PATH:$ORACLE_HOME/OPatch
+
+#clear
+env | grep  ORA
+;;
+
+*)
+        echo "You did not choose an environment! No Oracle parameters set!"
+esac
+
+EOF
+
+node1=$1
+node2=$2
+
+sshpass -p 'oracle' scp /oracle/.bash_profile oracle@$node2:/oracle/
+sshpass -p 'oracle' ssh oracle@$node2 'sed -i s/+ASM1/+ASM2/g' /oracle/.bash_profile
+
+rm -- "$0"
+rm -frv /OracleRAC19C
+sshpass -p 'Passwd!1' ssh sysadm@$node2 'sudo rm -frv /OracleRAC19C'
+if [ $? -eq 0 ]; then
+{
+	echo "0" > /tmp/cluststat
+	sudo chmod 777 /tmp/cluststat
+}
+fi
+
+mv -f /usr/bin/scp.original /usr/bin/scp
+

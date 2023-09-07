@@ -1,0 +1,67 @@
+## Playbook is executed when end user needs to request a service either IAAD or PAAS
+---
+ - name: "Please check the list of providers"
+   hosts: localhost
+   gather_facts: yes
+   tasks:
+     - name: "List the provider name"
+       command: 'cat /var/vols/itom/aplays/provider_name'
+       register: op
+     #- debug: var=op.stdout_lines
+
+
+ - hosts: localhost
+   gather_facts: no
+   vars_prompt:
+          - name: project_name
+            prompt: "Please provide project name"
+            private: no
+          - name: project_code
+            prompt: "Please provide project code"
+            private: no
+          - name: dc
+            prompt: "Please select datacenter (Meydan or  Masdar)"
+            private: no
+          - name: os
+            prompt: "Please select operating system type (Windows or Linux)"
+            private: no
+          - name: ram
+            prompt: "Please enter required RAM in GB"
+            private: no
+          - name: cpu
+            prompt: "Please enter required CPU in number of cores"
+            private: no
+   vars:
+     filename: request
+     #json:
+     project_name: "{{ project_name }}"
+     project_code: "{{ project_code }}"
+     dc: "{{ dc }}"
+     os: "{{ os }}"
+     ram: "{{ ram }}"
+     cpu: "{{ cpu }}"
+     vlanID: null
+     Subnet: null
+       
+
+   tasks:
+     #- debug: msg="{{ json.project_code }}"
+     - name: "Create a request directory in case if it is not present"
+       file:
+         state: "directory"
+         path: "/var/vols/itom/aplays/requests/"
+     - name: "Creating a request file in json format and copying it in request"
+       copy:
+         #content: "{{ json | to_yaml }}"
+         content: "project_name: {{ project_name }}\n 
+                  project_code: {{ project_code }}\n
+                  dc:           {{ dc }}\n     
+                  os:           {{ os }}\n
+                  ram:          {{ ram }}\n
+                  cpu:          {{ cpu }}\n
+                  vlanID:       null\n
+                  subnet:       null"
+         dest: "/var/vols/itom/aplays/requests/{{ project_name }}_{{ project_code }}.yaml"
+     - name: dir
+       command: echo '/var/vols/itom/aplays/requests/{{ project_name }}_{{ project_code }}.yaml'
+       register: filepath 

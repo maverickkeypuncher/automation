@@ -1,0 +1,8 @@
+project_name: djcheck
+ project_code: djc
+ dc:           Meydan
+ os:           windows
+ ram:          8
+ cpu:          4
+ vlanID:       null
+ subnet:       null

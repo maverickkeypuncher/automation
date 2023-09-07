@@ -1,0 +1,38 @@
+---
+ - name: 'This play will power off the VM and delete it from vCenter using API'
+   hosts: localhost
+   gather_facts: no
+   #vars:
+   #   ansible_python_interpreteri: "/bin/python3"
+   tasks:
+    - name: "Power Off VM"
+      vmware_guest:
+             datacenter: Meydan
+             folder: '/Templates'
+             hostname: '10.175.69.6'
+             name: "MEYLVANSICHKDJ01"
+             password: "P@ssw0rd#2020"
+             port: 443
+             state: poweredoff
+             username: 'ducorp\hcm.vcenter'
+             validate_certs: false
+    - name: "Delete VM"
+      vmware_guest:
+             datacenter: Meydan
+             folder: '/Templates'
+             hostname: '10.175.69.6'
+             name: "MEYLVANSICHKDJ01"
+             password: "P@ssw0rd#2020"
+             port: 443
+             state: absent
+             username: 'ducorp\hcm.vcenter'
+             validate_certs: false
+
+             
+  
+                           
+                  
+
+                   
+                 
+               
